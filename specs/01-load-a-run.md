@@ -145,12 +145,27 @@ about what this spec fails to specify, most important first.
   should be updated to match the signature table in this spec. Flagging it here
   rather than editing it silently.
 
-- **Tests need real fixture files.** Every criterion above refers to a genuine
-  artifact shape, and hand-written fakes will drift from what the pipeline
-  actually emits. Before the tests are written, a small real run should be
-  captured into `data/` — a short `log.jsonl` with a handful of variants, its
-  `run_summary.json`, and one `benchmark_results.csv`. Backlog #12 also needs a
-  bundled sample run for a classmate to upload, so this serves both.
+- **Fixtures are in `data/`, and they are real pipeline output.** Two 8-variant
+  design runs at seeds 42 and 43, plus a three-pair structural benchmark. See
+  [`data/README.md`](../data/README.md) for exactly how they were produced and
+  what to know before asserting against them. All five signatures in the table
+  above were verified against these files: a design-log record has `physics` and
+  not `metrics`, a benchmark record has `metrics` and not `physics`, and the two
+  summaries are separated by `n_variants` against `pairs_total`.
+
+- **`metrics` is always present on a benchmark row, even when scoring failed.**
+  `_score_pair` in `petase_design/benchmark_run.py` assigns `row["metrics"] = {}`
+  *before* its `try` block, so an errored pair still carries the key with an
+  empty object. This is what makes the `metrics` signature safe, and it is why
+  detection must test for the key's **presence** rather than its truthiness. A
+  truthiness check would refuse a benchmark file whose first pair failed.
+
+- **The 50 MB limit now has a measured number behind it**, replacing the guess
+  noted below. An 8-variant `log.jsonl` is 8,856 bytes, so a record with a full
+  ~290-residue sequence costs about 1.1 KB. A 1,000-variant run lands near 1.1 MB
+  and 50 MB allows roughly 45,000 variants, which is far beyond any run this
+  pipeline produces. The limit is generous rather than tight, and it exists to
+  stop an accidental upload of something huge, not to bound a real run.
 
 - **Things I expect the questioner to raise**, recorded so the answers land in
   the table rather than in a chat window: what happens when two design logs are
@@ -160,7 +175,12 @@ about what this spec fails to specify, most important first.
   whether the `out_jsonl` mismatch check deferred above should actually be part
   of this feature instead of #5.
 
-- The 50 MB limit is a guess that needs a real number behind it. A 50-cycle
-  design run's `log.jsonl` carries a full variant sequence per record, so the
-  size should be measured against an actual long run before this is treated as
-  settled.
+- **A finding for backlog #6, recorded here so it isn't rediscovered.** Neither
+  fixture's `run_summary.json` contains an `objective_drift` block. The pipeline
+  only emits one when records carry an `objective_scalar`, and the plain
+  `python -m petase_design.run` path never sets that field — it comes from the
+  Pareto-archive and policy-mixing path the Streamlit GUI worker uses. So for
+  feature #6, "this run didn't record an objective per generation" is the
+  **common** case for CLI runs, not the rare edge case its acceptance criteria
+  currently imply. Feature #6 should be re-read in that light when its turn
+  comes.

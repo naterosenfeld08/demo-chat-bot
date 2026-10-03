@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-03T18:19:44.124270+00:00",
+  "out_jsonl": "/tmp/fixtures/sample-run-seed42/log.jsonl",
+  "counts": {
+    "n_variants": 8,
+    "n_with_structure": 0,
+    "n_with_sasa": 0,
+    "n_with_struct_benchmark": 0,
+    "n_struct_benchmark_ok": 0,
+    "pareto_frontier_count": 0
+  },
+  "composition": {
+    "generator_policy_counts": {
+      "adaptive": 5,
+      "random": 3
+    },
+    "selected_by_counts": {
+      "unknown": 8
+    }
+  },
+  "runtime": {
+    "seconds_wall": 0.003,
+    "started_at": "2026-10-03T18:19:44.121214+00:00",
+    "ended_at": "2026-10-03T18:19:44.124270+00:00"
+  },
+  "struct_benchmark": {
+    "main_gdt_ts_mean": null,
+    "main_gdt_ts_max": null,
+    "main_tm_score_mean": null,
+    "main_tm_score_max": null
+  },
+  "top_variants": [
+    {
+      "rank": 1,
+      "job_id": "gen00002",
+      "generation": 2,
+      "composite": 0.6085333333333334,
+      "mutation_count": 3,
+      "mutations_compact": "207E;120D;130W",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRASRLMQAAVLGGLMAVSAAATAQTNPYARGPNPTAASLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.6085333333333334
+    },
+    {
+      "rank": 2,
+      "job_id": "gen00001",
+      "generation": 1,
+      "composite": 0.6028045977011496,
+      "mutation_count": 3,
+      "mutations_compact": "8D;25G;65W",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRASRDMQAAVLGGLMAVSAAAGAQTNPYARGPNPTAASLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.6028045977011496
+    },
+    {
+      "rank": 3,
+      "job_id": "gen00005",
+      "generation": 5,
+      "composite": 0.5991126436781609,
+      "mutation_count": 3,
+      "mutations_compact": "213F;40I;165W",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRASRLMQAAVLGGLMAVSAAATAQTNPYARGPNPTAISLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.5991126436781609
+    },
+    {
+      "rank": 4,
+      "job_id": "gen00003",
+      "generation": 3,
+      "composite": 0.5956183908045978,
+      "mutation_count": 3,
+      "mutations_compact": "95F;41Q;278N",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRASRLMQAAVLGGLMAVSAAATAQTNPYARGPNPTAAQLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.5956183908045978
+    },
+    {
+      "rank": 5,
+      "job_id": "gen00004",
+      "generation": 4,
+      "composite": 0.5945241379310344,
+      "mutation_count": 3,
+      "mutations_compact": "202L;195S;148T",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRASRLMQAAVLGGLMAVSAAATAQTNPYARGPNPTAASLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.5945241379310344
+    },
+    {
+      "rank": 6,
+      "job_id": "gen00007",
+      "generation": 7,
+      "composite": 0.5943574712643678,
+      "mutation_count": 3,
+      "mutations_compact": "255H;206F;87W",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRASRLMQAAVLGGLMAVSAAATAQTNPYARGPNPTAASLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.5943574712643678
+    },
+    {
+      "rank": 7,
+      "job_id": "gen00000",
+      "generation": 0,
+      "composite": 0.5941862068965518,
+      "mutation_count": 3,
+      "mutations_compact": "6Q;77T;61N",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRAQRLMQAAVLGGLMAVSAAATAQTNPYARGPNPTAASLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.5941862068965518
+    },
+    {
+      "rank": 8,
+      "job_id": "gen00006",
+      "generation": 6,
+      "composite": 0.5930505747126438,
+      "mutation_count": 3,
+      "mutations_compact": "12N;62P;81Q",
+      "has_structure": false,
+      "structure_pdb_basename": null,
+      "sasa_total_area": null,
+      "sequence_length": 290,
+      "sequence_preview": "MNFPRASRLMQANVLGGLMAVSAAATAQTNPYARGPNPTAASLEASAG\u2026",
+      "struct_benchmark_status": null,
+      "struct_benchmark_main_gdt_ts": null,
+      "rank_score": 0.5930505747126438
+    }
+  ],
+  "run": {
+    "wt_fasta": "/private/tmp/petase/petase_design/data/petase_6eqd_chainA_notag.fasta",
+    "n_cycles": 8,
+    "mutations_per_variant": 3,
+    "seed": 42,
+    "structure_top_k": null,
+    "policy_mix": {
+      "random": 0.5,
+      "adaptive": 0.35,
+      "recombine": 0.15
+    },
+    "archive_size": 24,
+    "use_pareto_archive": true,
+    "protected_indices_count": 23,
+    "region_mutation_budgets": [],
+    "struct_benchmark": {
+      "enabled": false,
+      "manifest": null,
+      "include_controls": false,
+      "gdt_ts_min": null,
+      "coverage_min": null,
+      "weight": 0.0
+    }
+  }
+}
