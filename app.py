@@ -1,12 +1,28 @@
 import os
+import secrets
+import tempfile
+from pathlib import Path
 
 import requests
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, session
+from werkzeug.datastructures import FileStorage
+
+from src.artifacts import (
+    DESIGN_LOG,
+    IdentifyError,
+    identify,
+    sanitize_filename,
+    store,
+)
 
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
+app.config["MAX_ARTIFACT_BYTES"] = 50_000_000
+app.config["MAX_ARTIFACT_FILES"] = 20
+app.config["ARTIFACT_ROOT"] = tempfile.mkdtemp(prefix="petase-artifacts-")
 
 API_URL = "https://api.tensorx.ai/v1/chat/completions"
 DEFAULT_MODEL = os.environ.get("TENSORX_MODEL", "z-ai/glm-5.2")
@@ -25,12 +41,116 @@ def api_key():
     return key
 
 
+def session_id() -> str:
+    if "sid" not in session:
+        session["sid"] = secrets.token_hex(16)
+    return session["sid"]
+
+
+def session_payload(*, include_refused: bool, refused=None, error=None, accepted=None):
+    sid = session_id()
+    body = {
+        "artifacts": [item.as_dict() for item in (accepted if accepted is not None else store.list(sid))],
+        "warnings": store.warnings(sid),
+        "usable": store.usable(sid),
+    }
+    if include_refused:
+        body["refused"] = [item.as_dict() for item in (refused or [])]
+        body["error"] = error
+    return body
+
+
+def _refuse(filename: str, reason: str, existing: bool) -> dict:
+    if existing:
+        reason = f"{reason} The existing artifact was kept."
+    return {"filename": filename, "reason": reason, "count": None}
+
+
 @app.get("/")
 def index():
     return render_template(
         "index.html",
         model=DEFAULT_MODEL,
         key_ready=bool(api_key()),
+    )
+
+
+@app.get("/api/artifacts")
+def list_artifacts():
+    return jsonify(session_payload(include_refused=False))
+
+
+@app.post("/api/artifacts/clear")
+def clear_artifacts():
+    store.clear(session_id(), Path(app.config["ARTIFACT_ROOT"]))
+    return jsonify(session_payload(include_refused=False))
+
+
+@app.post("/api/artifacts")
+def upload_artifacts():
+    files: list[FileStorage] = request.files.getlist("files")
+    max_files = int(app.config["MAX_ARTIFACT_FILES"])
+    if len(files) > max_files:
+        return jsonify(
+            {
+                "artifacts": [],
+                "refused": [],
+                "warnings": store.warnings(session_id()),
+                "error": (
+                    f"Too many files. This request has {len(files)}; "
+                    f"the limit is {max_files}."
+                ),
+                "usable": store.usable(session_id()),
+            }
+        )
+
+    sid = session_id()
+    root = Path(app.config["ARTIFACT_ROOT"])
+    limit = int(app.config["MAX_ARTIFACT_BYTES"])
+    accepted = []
+    refused = []
+
+    for uploaded in files:
+        original_name = uploaded.filename or "upload"
+        stored_name = sanitize_filename(original_name)
+        existed = store.has_stored_name(sid, stored_name)
+        raw = uploaded.read()
+        if raw == b"":
+            refused.append(_refuse(original_name, "The file is empty.", existed))
+            continue
+        if len(raw) > limit:
+            refused.append(
+                _refuse(
+                    original_name,
+                    f"File exceeds the {limit}-byte limit.",
+                    existed,
+                )
+            )
+            continue
+        try:
+            artifact = identify(original_name, raw)
+        except IdentifyError as exc:
+            refused.append(_refuse(original_name, exc.reason, existed))
+            continue
+        if artifact.type == DESIGN_LOG and store.has_design_log(sid, artifact.stored_name):
+            refused.append(
+                _refuse(
+                    original_name,
+                    "A design log is already loaded. Clear the session first.",
+                    existed,
+                )
+            )
+            continue
+        accepted.append(store.put(sid, artifact, raw, root).as_dict())
+
+    return jsonify(
+        {
+            "artifacts": accepted,
+            "refused": refused,
+            "warnings": store.warnings(sid),
+            "error": None,
+            "usable": store.usable(sid),
+        }
     )
 
 

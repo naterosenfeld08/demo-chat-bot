@@ -78,14 +78,26 @@
       font-family: ui-sans-serif, system-ui, sans-serif;
       font-size: 0.9rem;
     }
+    #upload-panel {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+    }
+    #uploader { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    #artifact-list { list-style: none; padding: 0; margin: 12px 0 0; }
+    #artifact-list li { padding: 6px 0; border-top: 1px solid var(--line); font-size: 0.9rem; }
+    .muted { color: var(--muted); font-size: 0.9rem; }
   </style>
 </head>
 <body>
   <main>
     <header>
       <div>
-        <h1>Demo chat bot</h1>
-        <p>Model {{ model }} · TensorX</p>
+        <h1>PETase Run Analyst</h1>
+        <p>Upload a run, then ask about it. Model {{ model }} · TensorX</p>
       </div>
       <div class="controls">
         <label>
@@ -99,6 +111,20 @@
         <button id="clear" type="button">Clear chat</button>
       </div>
     </header>
+    <section id="upload-panel">
+      <p>
+        Look for <code>log.jsonl</code> and <code>run_summary.json</code> in a
+        design-run folder. Optional: <code>benchmark_results.csv</code>,
+        <code>benchmark_results.jsonl</code>, or <code>benchmark_summary.json</code>.
+      </p>
+      <form id="uploader">
+        <input id="file-input" type="file" name="files" multiple />
+        <button class="primary" type="submit">Upload</button>
+        <button id="clear-run" type="button">Clear run</button>
+      </form>
+      <div id="upload-status" class="muted" hidden></div>
+      <ul id="artifact-list"></ul>
+    </section>
     {% if not key_ready %}
     <div class="banner">Add your TensorX key to <code>.env</code> as <code>TENSORX_API_KEY</code>, then restart the app.</div>
     {% endif %}
@@ -114,6 +140,51 @@
     const messageBox = document.getElementById("message");
     const tone = document.getElementById("tone");
     const messages = [];
+    const uploader = document.getElementById("uploader");
+    const fileInput = document.getElementById("file-input");
+    const artifactList = document.getElementById("artifact-list");
+    const uploadStatus = document.getElementById("upload-status");
+
+    function showStatus(text) {
+      uploadStatus.hidden = !text;
+      uploadStatus.textContent = text || "";
+    }
+
+    function renderArtifacts(items) {
+      artifactList.replaceChildren();
+      for (const item of items || []) {
+        const li = document.createElement("li");
+        const count = item.count_display || item.count || "not recorded";
+        const source = item.count_source ? ` · ${item.count_source}` : "";
+        li.textContent = `${item.stored_name}: ${item.type}, ${count}${source}`;
+        artifactList.appendChild(li);
+      }
+    }
+
+    uploader.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!fileInput.files.length) {
+        showStatus("Choose one or more files first.");
+        return;
+      }
+      const body = new FormData();
+      for (const file of fileInput.files) body.append("files", file);
+      const response = await fetch("/api/artifacts", { method: "POST", body });
+      const data = await response.json();
+      renderArtifacts(data.artifacts);
+      const parts = [];
+      if (data.error) parts.push(data.error);
+      for (const item of data.refused || []) parts.push(item.reason);
+      for (const warning of data.warnings || []) parts.push(warning);
+      showStatus(parts.join(" "));
+    });
+
+    document.getElementById("clear-run").addEventListener("click", async () => {
+      await fetch("/api/artifacts/clear", { method: "POST" });
+      artifactList.replaceChildren();
+      showStatus("");
+      fileInput.value = "";
+    });
 
     function addBubble(role, text) {
       const el = document.createElement("div");
