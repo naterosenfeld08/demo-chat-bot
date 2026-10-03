@@ -14,9 +14,18 @@ rather than guessing.
 <!-- Fill this in. Two or three sentences. An assistant that knows what the app
      is for makes better guesses about everything you forgot to specify. -->
 
-**Purpose:**
+**Purpose:** A web app for interrogating the run artifacts produced by
+[petase-thermostability-benchmark](https://github.com/naterosenfeld08/petase-thermostability-benchmark),
+a protein thermostability pipeline. You upload a design run's `log.jsonl` and
+`run_summary.json`, then ask questions in plain English; the server computes the
+statistics and an AI model explains them with the project's interpretation
+caveats attached. It replaces the throwaway pandas scripts that currently get
+written, read once, and lost.
 
-**Who uses it:**
+**Who uses it:** Primarily its author, a student maintaining that pipeline, who
+has a growing pile of run directories and no way to ask comparative questions of
+them. Secondarily anyone running an iterative in-silico design loop that emits
+the same shape of structured run logs.
 
 **What kind of app:** Server-side web app. A Python Flask server renders the
 pages and makes every outside API call, so the API key stays off the browser.
@@ -85,21 +94,47 @@ stated, ask before starting. The roles have different rules.
 
 ## 4. Project rules
 
-<!-- Yours. Add a rule every time an assistant does something you didn't want.
-     A rule written here is a mistake that never happens twice. Examples of the
-     shape. Delete these and write your own:
+<!-- Mine. A rule gets added here every time an assistant does something I
+     didn't want, so the same mistake cannot happen twice. -->
 
-     - Keep all user-facing text in one place so it can be changed without
-       hunting through the code.
-     - Do not add a new dependency without asking. Prefer what's already here.
-     - Every user-visible date shows as "Mar 3, 2026", never as a raw timestamp.
-     - If the app can't reach the network, show a message and keep working
-       offline. Never show a blank screen.
--->
+1. **The server computes every number. The model never does arithmetic.** Any
+   statistic shown to the user is produced by Python in this repo and passed to
+   the model as context. If a feature seems to need the model to add, average,
+   compare, or rank, that is a signal the server is missing a function — write
+   the function. See `docs/proposal.md` section 3 for why.
 
--
--
--
+2. **Every number names its source.** A displayed value carries the artifact and
+   field it came from, like "`run_summary.json` → `counts.n_variants`". A number
+   with no provenance is not shippable.
+
+3. **Never present a proxy as a measurement.** The physics composite, the ΔΔG
+   output, and the Random Forest interval are proxies. They are not Tm, not
+   activity, and not experimental error. Do not convert between them, do not
+   phrase one as the other, and refuse requests that ask for the conversion.
+
+4. **Caveats are data, not prose.** Interpretation caveats live in a file that is
+   read at request time. Never hardcode caveat text into a prompt string or a
+   template, because the whole point is that editing the file changes the output.
+
+5. **Missing is not zero.** A field absent from an artifact displays "not
+   recorded". Never `0`, never `null`, never an empty cell. Silently defaulting a
+   missing metric to zero is how a run looks worse than it was.
+
+6. **Parse defensively; real logs are messy.** Run logs are appended during long
+   jobs and get truncated, interleaved, and half-written. A malformed line means
+   skip it and report the count, never crash and never discard the whole file.
+
+7. **This repo never writes to the pipeline repo.** `petase-thermostability-benchmark`
+   is read-only input. Do not propose edits to it, do not import from it, and do
+   not shell out to its scripts.
+
+8. **Do not add a dependency without asking.** `requirements.txt` is already the
+   thing a classmate has to install successfully in Stage 3. Prefer the standard
+   library and what's already listed.
+
+9. **Say when a number looks wrong.** If a computed statistic disagrees with what
+   the artifact's own summary claims, surface the disagreement rather than picking
+   a winner. A mismatch is a finding, not a bug to paper over.
 
 ---
 

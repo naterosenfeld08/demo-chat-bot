@@ -2,18 +2,31 @@
      rewritten in Stage 3 when a classmate has to run your app from it without
      asking you anything. See docs/course/DELIVERABLES.md -->
 
-# demo-chat-bot
+# PETase Run Analyst
 
-A browser chat app that talks to an AI model, with selectable response tones.
+Ask questions in plain English about the run logs from a protein thermostability
+pipeline, and get answers computed from the data with the right scientific
+caveats attached.
 
 ## What it does
 
-You type a message, the app sends your conversation to the TensorX AI service,
-and the reply appears in the page. A tone menu (Helpful, Tutor, Concise) changes
-how the AI answers. "Clear chat" discards the current conversation.
+The [petase-thermostability-benchmark](https://github.com/naterosenfeld08/petase-thermostability-benchmark)
+pipeline runs an in-silico design loop over PETase variants and writes a
+`log.jsonl` with one record per variant plus a `run_summary.json` beside it.
+Those files hold the real results, but asking anything of them means writing a
+throwaway pandas script that gets closed with the terminal window.
 
-The API key lives on the server, in a file that is never committed, so it is
-never exposed to the browser.
+This app takes those artifacts and lets you ask instead. Upload a run, and you
+get headline numbers, a comparison against another run, and answers to typed
+questions like "what was the best composite score." **Every number is computed by
+the server in Python, never by the AI model** — the model's only job is choosing
+which statistic answers your question and explaining it in prose. Answers carry
+the interpretation caveats from the pipeline's own
+[limitations doc](https://github.com/naterosenfeld08/petase-thermostability-benchmark/blob/main/docs/LIMITATIONS_AND_PRIORS.md),
+so a proxy score never gets quoted as if it were a measured melting temperature.
+
+See [docs/proposal.md](docs/proposal.md) for the problem this solves and
+[docs/backlog.md](docs/backlog.md) for the features in build order.
 
 ## Screenshot
 
@@ -83,8 +96,10 @@ Set `TENSORX_API_KEY` in the service's Environment settings, then deploy. See
 ## Project status
 
 **Current version:** pre-alpha
-**Working:** a single-session chat page with three tones, running locally
-**Not working yet:** see [docs/backlog.md](docs/backlog.md)
+**Working:** the chat page and server this is built on — you can type a message
+and get an AI reply, with three selectable tones
+**Not working yet:** everything that reads a run artifact. Feature #1 is upload
+and recognition; see [docs/backlog.md](docs/backlog.md)
 
 ## How this project is organized
 
