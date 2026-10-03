@@ -18,7 +18,9 @@ rather than guessing.
 
 **Who uses it:**
 
-**What kind of app:** (static-web, server-side web app, python-tool, other, see docs/course/tracks.md)
+**What kind of app:** Server-side web app. A Python Flask server renders the
+pages and makes every outside API call, so the API key stays off the browser.
+See `docs/course/tracks.md`.
 
 ---
 
@@ -105,12 +107,15 @@ stated, ask before starting. The roles have different rules.
 
 <!-- How this repo is laid out and named. Fill in as you go. -->
 
-- **Source code:** `src/`
+- **Source code:** `app.py` is the Flask entry point. Server modules go in `src/`.
+- **Pages:** `templates/` (Jinja templates). Styles and scripts go in `static/`.
 - **Tests:** `tests/`, one file per feature, named for the spec it tests
 - **Feature specs:** `specs/NN-name.md`, numbered to match `docs/backlog.md`
 - **Data files:** `data/`
 - **Branches:** `feature/NN-short-name`
 - **Commits:** present tense, one line, says what changed and why
-- **Language / framework:**
-- **Run the app:**
-- **Run the tests:**
+- **Language / framework:** Python 3 with Flask; Jinja templates, plain CSS and
+  JavaScript for the pages. Deployed on Render with `gunicorn`.
+- **Run the app:** `source .venv/bin/activate && python app.py`, then open
+  <http://127.0.0.1:5000>. Use `PORT=5050 python app.py` if 5000 is taken.
+- **Run the tests:** `pytest`
