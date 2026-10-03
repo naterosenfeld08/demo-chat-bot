@@ -68,13 +68,25 @@ ones the app understood.*
 - It's done when uploading a file that is not `.json`, `.jsonl`, or `.csv` shows
   the message "I don't recognize this file type" and the file is not added to
   the session.
-- It's done when uploading a `.jsonl` whose first line has neither a `physics`
-  nor a `job_id` key shows "This looks like JSONL but not a design log" instead
-  of a stack trace.
-- It's done when uploading a file over 50 MB is refused with a message that
-  names the 50 MB limit.
+- It's done when uploading a `.jsonl` whose first parseable object has neither a
+  `physics` nor a `metrics` key shows "This looks like JSONL but not a design
+  log" instead of a stack trace.
+- It's done when uploading a file over 50,000,000 bytes is refused with a
+  message that names the limit.
 - It's done when a `log.jsonl` containing one malformed line among valid ones
   loads the valid records and reports how many lines it skipped.
+- It's done when a `run_summary.json` and a `log.jsonl` are both loaded, their
+  variant counts disagree, and both numbers are shown with their sources
+  alongside a statement of the disagreement.
+
+> **Corrected 2026-10-03.** This item originally said a `.jsonl` qualifies as a
+> design log if its records carry `physics` **or `job_id`**. That was wrong:
+> records in `benchmark_results.jsonl` also carry `job_id`, so the rule would
+> have filed a structural benchmark as a design log. Only `physics` discriminates.
+> The disagreement criterion was added after the question round found that the
+> spec's deferral of same-run checking contradicted `AGENTS.md` rule 9.
+> [`specs/01-load-a-run.md`](../specs/01-load-a-run.md) holds the full set of
+> criteria and the reasoning.
 
 ### 2. Run summary card
 
