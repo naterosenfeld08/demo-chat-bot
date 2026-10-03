@@ -469,10 +469,10 @@ def test_two_sessions_do_not_see_each_other(client, second_client):
     """Two browser sessions uploading different runs each see only their own
     artifacts."""
     upload(client, ("log.jsonl", design_log(8)))
-    assert second_payload(client.get("/api/artifacts"))["artifacts"] == []
+    assert payload(second_client.get("/api/artifacts"))["artifacts"] == []
 
     upload(second_client, ("run_summary.json", body(RUN_SUMMARY)))
     mine = [a["type"] for a in payload(client.get("/api/artifacts"))["artifacts"]]
-    theirs = [a["type"] for a in second_payload(client.get("/api/artifacts"))["artifacts"]]
+    theirs = [a["type"] for a in payload(second_client.get("/api/artifacts"))["artifacts"]]
     assert mine == ["design log"]
     assert theirs == ["run summary"]
