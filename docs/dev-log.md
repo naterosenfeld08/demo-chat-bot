@@ -1,0 +1,29 @@
+<!-- Course: Stage 2 (graded) and Stage 4 (feeds your final report). Several of
+     the Friday lab milestones get recorded here. See docs/course/DELIVERABLES.md -->
+
+# Development log
+
+A running record of how this project got built and how AI was used to build it.
+
+Add an entry when something notable happens: a feature ships, an assistant does
+something surprising (well or badly), you get stuck, you change your approach.
+Two or three sentences is plenty. Writing it as you go takes minutes; recon-
+structing it in week 15 takes hours and the result is worse.
+
+**Screenshots go in `assets/`** and get linked from the relevant entry.
+
+---
+
+## Template for an entry
+
+### YYYY-MM-DD - Short title
+
+**What happened:**
+**AI tools used, and for what:**
+**What surprised me:**
+
+---
+
+## Entries
+
+<!-- Newest first. -->
