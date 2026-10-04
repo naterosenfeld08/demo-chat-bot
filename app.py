@@ -99,6 +99,7 @@ def index():
         "index.html",
         model=DEFAULT_MODEL,
         key_ready=bool(api_key()),
+        llm_mode=str(app.config.get("LLM_MODE", "echo")),
     )
 
 

@@ -100,8 +100,9 @@ track as FastAPI on uvicorn with `main.py` as the entry point. This project uses
 Flask with `app.py`, because the working chat app it builds on was already Flask.
 Both satisfy everything the track requires — one command to run the app, one
 command to run the tests, tests that fail out loud, and a URL a peer can try —
-and the choice is recorded in `AGENTS.md` section 5. I will confirm with the
-instructor that the deviation is acceptable before Stage 2.
+and the choice is recorded in `AGENTS.md` section 5. Confirming the deviation
+with the instructor is still open; the app meets the track's runnable-app
+requirements either way.
 
 ### The one design decision everything else follows from
 

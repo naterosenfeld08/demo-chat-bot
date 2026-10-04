@@ -112,56 +112,56 @@ Every displayed count names where it came from, per `AGENTS.md` rule 2.
 
 Happy path:
 
-- [ ] Uploading a design run's `run_summary.json` lists it as recognized, labeled `run summary`.
-- [ ] Uploading a `log.jsonl` lists it as recognized, labeled `design log`, showing the number of variant records it contains.
-- [ ] Uploading a `benchmark_results.csv` lists it as recognized, labeled `benchmark results`, showing the number of data rows excluding the header.
-- [ ] Uploading a `benchmark_summary.json` lists it as recognized, labeled `benchmark summary`.
-- [ ] Every recognized benchmark artifact is listed with the note `no feature uses this yet`, and no design-log or run-summary row carries that note.
-- [ ] Uploading a `run_summary.json` and a `log.jsonl` together lists both, each with its own type, in one response.
-- [ ] Every row that shows a count also names the source of that count: `counts.n_variants`, `counts.pairs_total`, parsed JSONL records, or CSV data rows.
-- [ ] Uploading only a `run_summary.json`, with no design log, leaves the session in a usable state rather than warning that something is missing.
+- [x] Uploading a design run's `run_summary.json` lists it as recognized, labeled `run summary`.
+- [x] Uploading a `log.jsonl` lists it as recognized, labeled `design log`, showing the number of variant records it contains.
+- [x] Uploading a `benchmark_results.csv` lists it as recognized, labeled `benchmark results`, showing the number of data rows excluding the header.
+- [x] Uploading a `benchmark_summary.json` lists it as recognized, labeled `benchmark summary`.
+- [x] Every recognized benchmark artifact is listed with the note `no feature uses this yet`, and no design-log or run-summary row carries that note.
+- [x] Uploading a `run_summary.json` and a `log.jsonl` together lists both, each with its own type, in one response.
+- [x] Every row that shows a count also names the source of that count: `counts.n_variants`, `counts.pairs_total`, parsed JSONL records, or CSV data rows.
+- [x] Uploading only a `run_summary.json`, with no design log, leaves the session in a usable state rather than warning that something is missing.
 
 Identification edge cases:
 
-- [ ] Uploading a `benchmark_results.jsonl`, whose records have `metrics` but no `physics`, is labeled `benchmark results` and is never labeled `design log`.
-- [ ] A `log.jsonl` whose first line is truncated mid-object but whose remaining lines are valid is still labeled `design log`, and the response reports that 1 line was skipped.
-- [ ] A `log.jsonl` with one malformed line among valid ones loads every valid record, reports the count of records loaded, and separately reports how many lines were skipped.
-- [ ] A `log.jsonl` containing one line that is a valid JSON object but carries `metrics` instead of `physics` loads the `physics` records and counts that line as skipped.
-- [ ] A `log.jsonl` containing a line that is a valid JSON array and another that is a bare number counts both as skipped and neither as a record.
-- [ ] A `.json` file whose `counts` object contains `pairs_total` is labeled `benchmark summary`, and the same file with `n_variants` instead is labeled `run summary`.
-- [ ] A `run_summary.json` whose `counts.n_variants` is a string, a negative number, a boolean, or `null` is still recognized as `run summary`, displays `not recorded` for the count, and says the artifact's own value was unusable.
-- [ ] Blank lines in a `.jsonl` are not counted as records and are not counted as skipped lines.
+- [x] Uploading a `benchmark_results.jsonl`, whose records have `metrics` but no `physics`, is labeled `benchmark results` and is never labeled `design log`.
+- [x] A `log.jsonl` whose first line is truncated mid-object but whose remaining lines are valid is still labeled `design log`, and the response reports that 1 line was skipped.
+- [x] A `log.jsonl` with one malformed line among valid ones loads every valid record, reports the count of records loaded, and separately reports how many lines were skipped.
+- [x] A `log.jsonl` containing one line that is a valid JSON object but carries `metrics` instead of `physics` loads the `physics` records and counts that line as skipped.
+- [x] A `log.jsonl` containing a line that is a valid JSON array and another that is a bare number counts both as skipped and neither as a record.
+- [x] A `.json` file whose `counts` object contains `pairs_total` is labeled `benchmark summary`, and the same file with `n_variants` instead is labeled `run summary`.
+- [x] A `run_summary.json` whose `counts.n_variants` is a string, a negative number, a boolean, or `null` is still recognized as `run summary`, displays `not recorded` for the count, and says the artifact's own value was unusable.
+- [x] Blank lines in a `.jsonl` are not counted as records and are not counted as skipped lines.
 
 Disagreement between artifacts:
 
-- [ ] When a `run_summary.json` and a `log.jsonl` are both loaded and the summary's `counts.n_variants` differs from the number of records in the log, both numbers are shown with their sources and the disagreement is stated.
-- [ ] When those two numbers agree, no disagreement is reported.
+- [x] When a `run_summary.json` and a `log.jsonl` are both loaded and the summary's `counts.n_variants` differs from the number of records in the log, both numbers are shown with their sources and the disagreement is stated.
+- [x] When those two numbers agree, no disagreement is reported.
 
 Refusals, each with its own message and none of them added to the session:
 
-- [ ] Uploading a `.txt`, `.pdb`, or `.fasta` file shows `I don't recognize this file type` and names the three extensions that are accepted.
-- [ ] Uploading a file of 50,000,001 bytes is refused with a message naming the 50,000,000-byte limit, and no record count is reported for it.
-- [ ] Uploading a file of exactly 50,000,000 bytes is accepted, because the limit is inclusive.
-- [ ] Uploading 21 files in one request is refused with a message naming the 20-file limit, and none of the 21 is added.
-- [ ] Uploading a 0-byte file is refused with a message saying the file is empty.
-- [ ] A second `design log` is refused with a message saying one is already loaded and the session must be cleared first, and the first design log remains loaded.
-- [ ] A `.jsonl` whose first parseable object has neither a `physics` nor a `metrics` key is refused with `This looks like JSONL but not a design log`.
-- [ ] A `.jsonl` in which no line at all parses as a JSON object is refused with a message saying no readable records were found.
-- [ ] A `.json` file that is not valid JSON is refused with a message saying so, and the app does not return a 500.
-- [ ] A `.json` file that parses but whose top level is an array or a number rather than an object is refused.
-- [ ] A `.json` object with no `counts` key, or whose `counts` holds neither `n_variants` nor `pairs_total`, is refused with a message naming both keys it looked for.
-- [ ] A `.csv` whose header lacks any of `job_id`, `mutation_code`, or `seq_identity` is refused with a message naming the missing columns.
-- [ ] A file with an accepted extension whose bytes are not valid UTF-8 is refused with a message saying it is not valid UTF-8 text, and the app does not return a 500.
+- [x] Uploading a `.txt`, `.pdb`, or `.fasta` file shows `I don't recognize this file type` and names the three extensions that are accepted.
+- [x] Uploading a file of 50,000,001 bytes is refused with a message naming the 50,000,000-byte limit, and no record count is reported for it.
+- [x] Uploading a file of exactly 50,000,000 bytes is accepted, because the limit is inclusive.
+- [x] Uploading 21 files in one request is refused with a message naming the 20-file limit, and none of the 21 is added.
+- [x] Uploading a 0-byte file is refused with a message saying the file is empty.
+- [x] A second `design log` is refused with a message saying one is already loaded and the session must be cleared first, and the first design log remains loaded.
+- [x] A `.jsonl` whose first parseable object has neither a `physics` nor a `metrics` key is refused with `This looks like JSONL but not a design log`.
+- [x] A `.jsonl` in which no line at all parses as a JSON object is refused with a message saying no readable records were found.
+- [x] A `.json` file that is not valid JSON is refused with a message saying so, and the app does not return a 500.
+- [x] A `.json` file that parses but whose top level is an array or a number rather than an object is refused.
+- [x] A `.json` object with no `counts` key, or whose `counts` holds neither `n_variants` nor `pairs_total`, is refused with a message naming both keys it looked for.
+- [x] A `.csv` whose header lacks any of `job_id`, `mutation_code`, or `seq_identity` is refused with a message naming the missing columns.
+- [x] A file with an accepted extension whose bytes are not valid UTF-8 is refused with a message saying it is not valid UTF-8 text, and the app does not return a 500.
 
 Session and safety:
 
-- [ ] A file whose name contains `../` is stored under a sanitized name inside the session's own directory, and no file is created anywhere outside that directory.
-- [ ] Uploading a file whose **sanitized** name matches one already loaded replaces it, the row says it replaced an earlier upload, and the row shows the sanitized name.
-- [ ] Uploading `../log.jsonl` when `log.jsonl` is already loaded is treated as a replacement, because the two sanitize to the same name.
-- [ ] An upload that is refused leaves any previously loaded artifact of the same name in place, and the row says the existing artifact was kept.
-- [ ] Before anything is uploaded, the page names the files to look for and shows no artifact list.
-- [ ] Clearing the session empties the artifact list and deletes the session's temporary directory from disk.
-- [ ] Two browser sessions uploading different runs each see only their own artifacts.
+- [x] A file whose name contains `../` is stored under a sanitized name inside the session's own directory, and no file is created anywhere outside that directory.
+- [x] Uploading a file whose **sanitized** name matches one already loaded replaces it, the row says it replaced an earlier upload, and the row shows the sanitized name.
+- [x] Uploading `../log.jsonl` when `log.jsonl` is already loaded is treated as a replacement, because the two sanitize to the same name.
+- [x] An upload that is refused leaves any previously loaded artifact of the same name in place, and the row says the existing artifact was kept.
+- [x] Before anything is uploaded, the page names the files to look for and shows no artifact list.
+- [x] Clearing the session empties the artifact list and deletes the session's temporary directory from disk.
+- [x] Two browser sessions uploading different runs each see only their own artifacts.
 
 ## Question round
 

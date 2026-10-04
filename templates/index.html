@@ -106,7 +106,14 @@
     <header>
       <div>
         <h1>PETase Run Analyst</h1>
-        <p>Upload a run, then ask about it. Model {{ model }} · TensorX</p>
+        <p>
+          Upload a run, then ask about it.
+          {% if llm_mode == "echo" %}
+          Every number is computed on this server.
+          {% else %}
+          Model {{ model }} · TensorX
+          {% endif %}
+        </p>
       </div>
       <div class="controls">
         <label>
@@ -135,7 +142,7 @@
       <ul id="artifact-list"></ul>
       <div id="run-summary-card" hidden></div>
     </section>
-    {% if not key_ready %}
+    {% if llm_mode == "live" and not key_ready %}
     <div class="banner">Add your TensorX key to <code>.env</code> as <code>TENSORX_API_KEY</code>, then restart the app.</div>
     {% endif %}
     <div id="log" aria-live="polite"></div>

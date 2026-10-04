@@ -87,20 +87,21 @@ def _best_from_summary(raw: bytes) -> tuple[float | None, str | None]:
 def _best_composite_detail(
     session_id: str, root: Path
 ) -> tuple[float | None, str | None, str]:
-    log_meta = store.find(session_id, DESIGN_LOG)
+    # Same winner as the summary card: the run summary, when it has a value.
     summary_meta = store.find(session_id, RUN_SUMMARY)
-    if log_meta:
-        raw = store.read_bytes(session_id, log_meta.stored_name, root)
-        if raw is not None:
-            value, job_id = _best_from_log(_parse_log(raw))
-            if value is not None:
-                return value, job_id, "log.jsonl → physics.composite"
     if summary_meta:
         raw = store.read_bytes(session_id, summary_meta.stored_name, root)
         if raw is not None:
             value, job_id = _best_from_summary(raw)
             if value is not None:
                 return value, job_id, "run_summary.json → top_variants[].composite"
+    log_meta = store.find(session_id, DESIGN_LOG)
+    if log_meta:
+        raw = store.read_bytes(session_id, log_meta.stored_name, root)
+        if raw is not None:
+            value, job_id = _best_from_log(_parse_log(raw))
+            if value is not None:
+                return value, job_id, "log.jsonl → physics.composite"
     return None, None, ""
 
 

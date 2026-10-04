@@ -81,23 +81,23 @@ reload, the same way the artifact list uses `GET /api/artifacts`.
 
 ## Acceptance criteria
 
-- [ ] With nothing loaded, `GET /api/summary` returns `present` false and no fields, and the page has an element `#run-summary-card` that does not show any of the four numbers.
-- [ ] Uploading the seed-42 `run_summary.json` makes the card present, with variant count `8` sourced from `run_summary.json` → `counts.n_variants`.
-- [ ] That same card shows structures `0` sourced from `run_summary.json` → `counts.n_with_structure`, and the display is `0`, not `not recorded`.
-- [ ] That same card shows best composite equal to the maximum `top_variants[].composite` in the file (`0.6085333333333334`) and names that source.
-- [ ] That same card shows wall-clock seconds `0.003` sourced from `run_summary.json` → `runtime.seconds_wall`.
-- [ ] Uploading the seed-42 summary and log together still shows those four summary values, none marked recomputed.
-- [ ] Uploading only the seed-42 `log.jsonl` makes the card present, with variant count `8` marked recomputed and sourced from the log.
-- [ ] That log-only card shows structures `0` marked recomputed (every `structure_pdb` in the fixture is null) and best composite equal to the maximum `physics.composite` in the log, marked recomputed.
-- [ ] That log-only card shows wall-clock seconds as `not recorded`, with `value` null.
-- [ ] Uploading only benchmark artifacts does not make the card present.
-- [ ] A summary whose `counts.n_variants` is missing or not a usable number shows `not recorded` for variants, not `0`.
-- [ ] A summary whose `runtime` object is missing shows `not recorded` for seconds.
-- [ ] A summary with no `top_variants`, or none with a usable `composite`, shows `not recorded` for best composite.
-- [ ] A summary that says `8` variants next to a log of `4` records keeps `8` on the card and warns, naming both numbers and both sources.
-- [ ] A summary whose best composite disagrees with the log's maximum keeps the summary value and warns, naming both numbers.
-- [ ] Clearing the session makes the card not present again.
-- [ ] Two sessions each see only their own card.
+- [x] With nothing loaded, `GET /api/summary` returns `present` false and no fields, and the page has an element `#run-summary-card` that does not show any of the four numbers.
+- [x] Uploading the seed-42 `run_summary.json` makes the card present, with variant count `8` sourced from `run_summary.json` → `counts.n_variants`.
+- [x] That same card shows structures `0` sourced from `run_summary.json` → `counts.n_with_structure`, and the display is `0`, not `not recorded`.
+- [x] That same card shows best composite equal to the maximum `top_variants[].composite` in the file (`0.6085333333333334`) and names that source.
+- [x] That same card shows wall-clock seconds `0.003` sourced from `run_summary.json` → `runtime.seconds_wall`.
+- [x] Uploading the seed-42 summary and log together still shows those four summary values, none marked recomputed.
+- [x] Uploading only the seed-42 `log.jsonl` makes the card present, with variant count `8` marked recomputed and sourced from the log.
+- [x] That log-only card shows structures `0` marked recomputed (every `structure_pdb` in the fixture is null) and best composite equal to the maximum `physics.composite` in the log, marked recomputed.
+- [x] That log-only card shows wall-clock seconds as `not recorded`, with `value` null.
+- [x] Uploading only benchmark artifacts does not make the card present.
+- [x] A summary whose `counts.n_variants` is missing or not a usable number shows `not recorded` for variants, not `0`.
+- [x] A summary whose `runtime` object is missing shows `not recorded` for seconds.
+- [x] A summary with no `top_variants`, or none with a usable `composite`, shows `not recorded` for best composite.
+- [x] A summary that says `8` variants next to a log of `4` records keeps `8` on the card and warns, naming both numbers and both sources.
+- [x] A summary whose best composite disagrees with the log's maximum keeps the summary value and warns, naming both numbers.
+- [x] Clearing the session makes the card not present again.
+- [x] Two sessions each see only their own card.
 
 ## Question round
 

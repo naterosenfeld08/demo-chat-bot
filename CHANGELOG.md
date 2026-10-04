@@ -19,7 +19,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Ask a computed question: `POST /api/ask` answers variant count, best composite (three decimals + `job_id`), and wall-clock seconds from Python. Unknown questions return no number. An echo stub proves the model is not doing the arithmetic ([#3](https://github.com/naterosenfeld08/demo-chat-bot/pull/3)).
 
 ### Changed
-- <!-- changes to features that already existed -->
+- Ask uses the same winner as the summary card when both a log and a run summary are loaded (`AGENTS.md` rule 9).
 
 ### Fixed
 - <!-- bug fixes -->

@@ -9,6 +9,22 @@ A running record of how this project got built and how AI was used to build it.
 
 ## Entries
 
+### 2026-10-03 - Stage 2 process evidence posted on the PRs
+
+**What happened:** Features 02 and 03 were built in one sitting each and merged
+with empty PR conversations. Stage 2 grades process evidence on the pull
+requests (plain-English test descriptions, `approved`, ranked review, builder
+replies). Those comments were posted after merge rather than invented as if a
+second model had been in the room at the time. One real review finding on #3
+was fixed: when both artifacts are loaded, the ask path now uses the same
+winner as the summary card.
+**AI tools used, and for what:** Cursor posted the comments and applied the
+review fix. A second-model review was attempted and hit a rate limit, so the
+reviews are same-family and labeled that way.
+**What surprised me:** An empty PR conversation is invisible to a grader who
+never opens the chat transcript. The routine's "evidence accumulates on GitHub
+by itself" only works if the comments actually land on the PR.
+
 ### 2026-10-03 - Feature 03 shipped: ask a computed question
 
 **What happened:** After a usable run is loaded, typed questions go to
