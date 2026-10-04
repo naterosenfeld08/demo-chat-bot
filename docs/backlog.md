@@ -37,7 +37,7 @@ beside it, and for structural benchmarks a `benchmark_results.csv` and
 | # | Story | Status | Week |
 |---|---|---|---|
 | 1 | As a researcher, I can upload run artifacts and see which ones the app understood | shipped | 1 |
-| 2 | As a researcher, I can see headline numbers for a loaded run without typing a question | not started | 2 |
+| 2 | As a researcher, I can see headline numbers for a loaded run without typing a question | tests written | 2 |
 | 3 | As a researcher, I can ask a question in English and get an answer computed from the artifacts | not started | 3 |
 | 4 | As a researcher, I can't accidentally read more into a score than it supports | not started | 5 |
 | 5 | As a researcher, I can compare two runs side by side | not started | 5 |
