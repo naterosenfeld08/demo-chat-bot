@@ -140,7 +140,7 @@
     {% endif %}
     <div id="log" aria-live="polite"></div>
     <form id="composer">
-      <textarea id="message" placeholder="Ask something" required></textarea>
+      <textarea id="message" placeholder="Ask about the loaded run" required></textarea>
       <button class="primary" type="submit">Send</button>
     </form>
   </main>
@@ -292,15 +292,16 @@
       const button = form.querySelector("button");
       button.disabled = true;
       try {
-        const response = await fetch("/api/chat", {
+        const response = await fetch("/api/ask", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages, tone: tone.value }),
+          body: JSON.stringify({ question: content }),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Request failed");
-        messages.push({ role: "assistant", content: data.reply });
-        addBubble("assistant", data.reply);
+        const reply = data.answer || "No answer.";
+        messages.push({ role: "assistant", content: reply });
+        addBubble("assistant", reply);
       } catch (error) {
         addBubble("error", error.message);
         messages.pop();

@@ -86,6 +86,23 @@ Empties the session and deletes its temporary directory. Returns `200`.
 The page. With nothing loaded it names the files to look for and shows no
 artifact list.
 
+### `POST /api/ask`
+
+JSON body `{"question": "..."}`. Always `200`.
+
+```json
+{
+  "answer": "This run has 8 variants (run_summary.json → counts.n_variants).",
+  "intent": "n_variants",
+  "facts": {"n_variants": 8, "source": "run_summary.json → counts.n_variants"},
+  "echo": "{\"intent\": \"n_variants\", \"facts\": {\"n_variants\": 8, \"source\": \"run_summary.json → counts.n_variants\"}}"
+}
+```
+
+`echo` is the JSON string of the stats block that would be sent to a model.
+Tests set `app.config["LLM_MODE"]` to `echo`. With nothing usable loaded,
+`intent` is `need_upload` and `facts` is `{}`.
+
 ### Config keys
 
 | Key | Default | Why it's config rather than a literal |
