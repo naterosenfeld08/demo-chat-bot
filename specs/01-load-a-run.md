@@ -248,3 +248,24 @@ isolation.
   **common** case for CLI runs, not the rare edge case its acceptance criteria
   currently imply. Feature #6 should be re-read in that light when its turn
   comes.
+
+## User test log
+
+2026-10-03, against `http://127.0.0.1:5051`, using the bundled files in `data/`
+via curl (one cookie jar per browser session). Sent here from routine step 5.
+
+| Tried | Expected | Happened | Sent back to |
+|---|---|---|---|
+| Open the page with nothing loaded | Names `log.jsonl` and `run_summary.json`; session list empty | Both names present; `GET /api/artifacts` was `[]` | — |
+| Upload seed 42 `log.jsonl` and `run_summary.json` together | Both recognized; 8 variants each; session usable | Design log 8 (`parsed JSONL records`), run summary 8 (`counts.n_variants`), `usable: true`, no warning | — |
+| `GET /api/artifacts` after that upload | Same two files still listed | Same two files | — |
+| Upload seed 43 `log.jsonl` as `other.jsonl` | Refused; seed 42 log kept | Refused: "A design log is already loaded. Clear the session first." Session still usable | — |
+| Upload `petase.pdb` | Refused; names accepted extensions | "I don't recognize this file type. Accepted extensions are .json, .jsonl, .csv." | — |
+| Upload the sample benchmark CSV and summary | Recognized, counted 3, noted unused | Both labeled with `no feature uses this yet`; CSV 3 data rows; summary `counts.pairs_total` 3 | — |
+| Replace `log.jsonl` with the seed 43 log | Replaced; still one design log | `replaced: true`, count still 8 | — |
+| Upload a summary claiming 99 variants next to the 8-record log | Disagreement named with both sources | Warning: `99 (counts.n_variants) vs 8 (parsed JSONL records)` | — |
+| Re-upload an empty `log.jsonl` | Refused; existing log kept | "The file is empty. The existing artifact was kept." GET still showed count 8 | — |
+| Second cookie jar uploads only a summary | Sees only its own file; first session unchanged | Session 2: `[run summary]`. Session 1 kept its own list | — |
+| Clear session 1 | Session 1 empty; session 2 untouched | Session 1 `[]`; session 2 still `[run summary]` | — |
+
+No bug found. Did not send back to spec, tests, or design. Ready for merge once backlog status and a changelog line are written.
