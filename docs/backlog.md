@@ -47,7 +47,7 @@ beside it, and for structural benchmarks a `benchmark_results.csv` and
 | 9 | As a researcher, I can export a summary that's safe to send to a mentor | not started | 9 |
 | 10 | As a researcher, I can see what I already asked about a run | not started | 9 |
 | 11 | As a maintainer, I can find modules that shadow each other in the pipeline repo | not started | 10 (stretch) |
-| 12 | As a classmate, I can try the app from a URL with no setup | not started | 7 |
+| 12 | As a classmate, I can try the app from a URL with no setup | deployed, awaiting classmate testers | 7 |
 
 Item #12 is built in week 7 rather than last. It is listed near the end because
 it depends on #1–#3 existing, but Stage 3 needs it before the later features.

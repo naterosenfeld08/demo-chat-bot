@@ -4,7 +4,11 @@ Ask questions in plain English about the run logs from a protein
 thermostability pipeline. **Every number is computed by the server in Python.
 The language model never does the arithmetic.**
 
+**Live app:** <https://petase-run-analyst.onrender.com>  
 Public repo: <https://github.com/naterosenfeld08/demo-chat-bot>
+
+The Render free instance sleeps after about 15 minutes idle. The first load
+after that can take a minute.
 
 ## For CSCI-2521 graders
 
@@ -46,6 +50,13 @@ Caveats that stop a proxy score being read as a measured Tm are backlog item
 ![Seed-42 run loaded: summary card plus a computed best-composite answer](docs/screenshot-seed42.png)
 
 ## Try it (no API key)
+
+Fastest: open <https://petase-run-analyst.onrender.com>, upload
+`data/sample-run-seed42/log.jsonl` and `run_summary.json` from this repo
+(download them from GitHub if you are not cloning), then ask `how many
+variants were in this run`.
+
+To run it on your own machine:
 
 ```bash
 git clone https://github.com/naterosenfeld08/demo-chat-bot.git
@@ -104,8 +115,9 @@ No API key is required on Render if `LLM_MODE` stays `echo`. See
 **Current version:** pre-alpha (three core features shipped)
 **Working:** upload a run, see the summary card, ask a few English questions
 whose numbers are computed on the server.
-**Not working yet:** caveats (#4), two-run compare (#5), deploy-for-classmates
-(#12), and the later analysis features. See [docs/backlog.md](docs/backlog.md).
+**Not working yet:** caveats (#4), two-run compare (#5), and the later analysis
+features. The app is deployed; Stage 3 still needs classmate testers. See
+[docs/backlog.md](docs/backlog.md).
 
 ## How this project is organized
 
