@@ -276,6 +276,18 @@ class ArtifactStore:
     def list(self, session_id: str) -> list[Artifact]:
         return [self._copy(item) for item in self._sessions.get(session_id, [])]
 
+    def find(self, session_id: str, artifact_type: str) -> Artifact | None:
+        for item in self._sessions.get(session_id, []):
+            if item.type == artifact_type:
+                return self._copy(item)
+        return None
+
+    def read_bytes(self, session_id: str, stored_name: str, root: Path) -> bytes | None:
+        path = root / session_id / stored_name
+        if path.is_file():
+            return path.read_bytes()
+        return None
+
     def usable(self, session_id: str) -> bool:
         return any(
             item.type in (DESIGN_LOG, RUN_SUMMARY)
