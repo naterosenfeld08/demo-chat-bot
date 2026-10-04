@@ -2,7 +2,7 @@
 
 **Story:** As a researcher, I can upload run artifacts and see exactly which ones the app understood.
 **Backlog item:** #1
-**Status:** questioned
+**Status:** shipped
 
 ## What it does
 

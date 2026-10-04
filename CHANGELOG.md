@@ -14,7 +14,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
-- <!-- new features -->
+- Load a run and see what was recognized: upload `log.jsonl`, `run_summary.json`, and benchmark artifacts; the page lists what the server understood or why it refused ([#1](https://github.com/naterosenfeld08/demo-chat-bot/pull/1)).
 
 ### Changed
 - <!-- changes to features that already existed -->
