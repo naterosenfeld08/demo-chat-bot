@@ -15,6 +15,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from werkzeug.datastructures import FileStorage
+
 ACCEPTED_EXTENSIONS = (".json", ".jsonl", ".csv")
 BENCHMARK_NOTE = "no feature uses this yet"
 UNUSABLE_NOTE = "the artifact's own value was unusable"
@@ -69,6 +71,31 @@ class IdentifyError(Exception):
     def __init__(self, reason: str) -> None:
         super().__init__(reason)
         self.reason = reason
+
+
+READ_CHUNK = 64 * 1024
+
+
+def read_capped(uploaded: FileStorage, limit: int) -> tuple[bytes | None, bool]:
+    """Read at most `limit` bytes. If the file is larger, stop and drain the rest.
+
+    Returns (body, oversize). When oversize is True, body is None and at most
+    `limit` plus one chunk was held, not the whole upload.
+    """
+    chunks: list[bytes] = []
+    total = 0
+    stream = uploaded.stream
+    while True:
+        chunk = stream.read(READ_CHUNK)
+        if not chunk:
+            break
+        total += len(chunk)
+        if total > limit:
+            while stream.read(READ_CHUNK):
+                pass
+            return None, True
+        chunks.append(chunk)
+    return b"".join(chunks), False
 
 
 def sanitize_filename(name: str) -> str:

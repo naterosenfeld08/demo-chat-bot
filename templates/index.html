@@ -89,6 +89,7 @@
     #uploader { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     #artifact-list { list-style: none; padding: 0; margin: 12px 0 0; }
     #artifact-list li { padding: 6px 0; border-top: 1px solid var(--line); font-size: 0.9rem; }
+    #artifact-list li.refused { color: #8a1f11; }
     .muted { color: var(--muted); font-size: 0.9rem; }
   </style>
 </head>
@@ -150,16 +151,50 @@
       uploadStatus.textContent = text || "";
     }
 
-    function renderArtifacts(items) {
+    function artifactRowText(item) {
+      const name = item.stored_name || item.filename;
+      const count = item.count_display != null
+        ? item.count_display
+        : (item.count == null ? "not recorded" : String(item.count));
+      const parts = [name + ": " + item.type, count];
+      if (item.count_source) parts.push(item.count_source);
+      if (item.lines_read != null) parts.push("read " + item.lines_read + " lines");
+      if (item.skipped_lines) parts.push("skipped " + item.skipped_lines);
+      if (item.replaced) parts.push("replaced an earlier upload");
+      for (const note of item.notes || []) parts.push(note);
+      return parts.join(" · ");
+    }
+
+    function renderSession(session, extras) {
+      extras = extras || {};
       artifactList.replaceChildren();
-      for (const item of items || []) {
+      for (const item of session.artifacts || []) {
         const li = document.createElement("li");
-        const count = item.count_display || item.count || "not recorded";
-        const source = item.count_source ? ` · ${item.count_source}` : "";
-        li.textContent = `${item.stored_name}: ${item.type}, ${count}${source}`;
+        li.textContent = artifactRowText(item);
         artifactList.appendChild(li);
       }
+      for (const item of extras.refused || []) {
+        const li = document.createElement("li");
+        li.className = "refused";
+        li.textContent = (item.filename || "file") + ": refused · " + item.reason;
+        artifactList.appendChild(li);
+      }
+      const parts = [];
+      if (extras.error) parts.push(extras.error);
+      for (const warning of extras.warnings || session.warnings || []) {
+        parts.push(warning);
+      }
+      showStatus(parts.join(" "));
     }
+
+    async function loadSession(extras) {
+      const response = await fetch("/api/artifacts");
+      const session = await response.json();
+      renderSession(session, extras);
+      return session;
+    }
+
+    loadSession();
 
     uploader.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -171,19 +206,17 @@
       for (const file of fileInput.files) body.append("files", file);
       const response = await fetch("/api/artifacts", { method: "POST", body });
       const data = await response.json();
-      renderArtifacts(data.artifacts);
-      const parts = [];
-      if (data.error) parts.push(data.error);
-      for (const item of data.refused || []) parts.push(item.reason);
-      for (const warning of data.warnings || []) parts.push(warning);
-      showStatus(parts.join(" "));
+      await loadSession({
+        refused: data.refused,
+        error: data.error,
+        warnings: data.warnings,
+      });
     });
 
     document.getElementById("clear-run").addEventListener("click", async () => {
       await fetch("/api/artifacts/clear", { method: "POST" });
-      artifactList.replaceChildren();
-      showStatus("");
       fileInput.value = "";
+      await loadSession();
     });
 
     function addBubble(role, text) {

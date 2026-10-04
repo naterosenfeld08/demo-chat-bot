@@ -12,16 +12,23 @@ from src.artifacts import (
     DESIGN_LOG,
     IdentifyError,
     identify,
+    read_capped,
     sanitize_filename,
     store,
 )
 
 load_dotenv()
 
+MULTIPART_OVERHEAD_BYTES = 1_000_000
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config["MAX_ARTIFACT_BYTES"] = 50_000_000
 app.config["MAX_ARTIFACT_FILES"] = 20
+app.config["MAX_CONTENT_LENGTH"] = (
+    app.config["MAX_ARTIFACT_BYTES"] * app.config["MAX_ARTIFACT_FILES"]
+    + MULTIPART_OVERHEAD_BYTES
+)
 app.config["ARTIFACT_ROOT"] = tempfile.mkdtemp(prefix="petase-artifacts-")
 
 API_URL = "https://api.tensorx.ai/v1/chat/completions"
@@ -64,6 +71,23 @@ def _refuse(filename: str, reason: str, existing: bool) -> dict:
     if existing:
         reason = f"{reason} The existing artifact was kept."
     return {"filename": filename, "reason": reason, "count": None}
+
+
+@app.errorhandler(413)
+def request_too_large(_error):
+    sid = session.get("sid")
+    return jsonify(
+        {
+            "artifacts": [],
+            "refused": [],
+            "warnings": store.warnings(sid) if sid else [],
+            "error": (
+                "This request exceeds the upload size limit "
+                f"({app.config['MAX_CONTENT_LENGTH']} bytes)."
+            ),
+            "usable": store.usable(sid) if sid else False,
+        }
+    )
 
 
 @app.get("/")
@@ -114,11 +138,8 @@ def upload_artifacts():
         original_name = uploaded.filename or "upload"
         stored_name = sanitize_filename(original_name)
         existed = store.has_stored_name(sid, stored_name)
-        raw = uploaded.read()
-        if raw == b"":
-            refused.append(_refuse(original_name, "The file is empty.", existed))
-            continue
-        if len(raw) > limit:
+        raw, oversize = read_capped(uploaded, limit)
+        if oversize:
             refused.append(
                 _refuse(
                     original_name,
@@ -126,6 +147,9 @@ def upload_artifacts():
                     existed,
                 )
             )
+            continue
+        if raw == b"":
+            refused.append(_refuse(original_name, "The file is empty.", existed))
             continue
         try:
             artifact = identify(original_name, raw)
