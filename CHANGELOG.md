@@ -15,6 +15,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - Load a run and see what was recognized: upload `log.jsonl`, `run_summary.json`, and benchmark artifacts; the page lists what the server understood or why it refused ([#1](https://github.com/naterosenfeld08/demo-chat-bot/pull/1)).
+- Run summary card: four headline numbers (variants, structures, best composite, wall-clock seconds), each named with its source. A recorded zero stays zero ([#2](https://github.com/naterosenfeld08/demo-chat-bot/pull/2)).
 
 ### Changed
 - <!-- changes to features that already existed -->

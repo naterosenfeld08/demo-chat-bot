@@ -2,7 +2,7 @@
 
 **Story:** As a researcher, I can see headline numbers for the loaded run without typing a question.
 **Backlog item:** #2
-**Status:** built
+**Status:** shipped
 
 ## What it does
 
