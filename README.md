@@ -96,10 +96,11 @@ Set `TENSORX_API_KEY` in the service's Environment settings, then deploy. See
 ## Project status
 
 **Current version:** pre-alpha
-**Working:** the chat page and server this is built on — you can type a message
-and get an AI reply, with three selectable tones
-**Not working yet:** everything that reads a run artifact. Feature #1 is upload
-and recognition; see [docs/backlog.md](docs/backlog.md)
+**Working:** upload a run, see the summary card, and ask a few English questions
+whose numbers are computed on the server (`n_variants`, best composite, wall
+clock). Unanswerable questions name the missing artifact and return no statistic.
+**Not working yet:** caveats (#4), two-run compare (#5), and the later analysis
+features. See [docs/backlog.md](docs/backlog.md).
 
 ## How this project is organized
 

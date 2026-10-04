@@ -2,7 +2,7 @@
 
 **Story:** As a researcher, I can ask a question in English and get an answer whose numbers came from the artifacts.
 **Backlog item:** #3
-**Status:** built
+**Status:** shipped
 
 ## What it does
 
@@ -65,13 +65,13 @@ Nothing loaded: `intent` is `need_upload`, answer tells the user to upload
 
 ## Acceptance criteria
 
-- [ ] Asking "how many variants were in this run" after loading the seed-42 summary returns the same integer the summary card shows, and names `run_summary.json` → `counts.n_variants`.
-- [ ] Asking "what was the best composite score" after loading the seed-42 log returns `0.609` and the `job_id` of that variant (`gen00002`).
-- [ ] That best-composite answer names the artifact and field the number came from.
-- [ ] Asking "what was the GDT-TS" after loading only a design run returns `the loaded run doesn't record that`, names `benchmark_results.csv` (or equivalent), and `facts` is empty.
-- [ ] Asking "how long did the run take" with only a log loaded returns `the loaded run doesn't record that`, names `run_summary.json`, and `facts` is empty.
-- [ ] With `LLM_MODE=echo`, asking the variant-count question puts `8` in the echoed context.
-- [ ] Asking any question with nothing loaded says to upload `log.jsonl` or `run_summary.json` first and returns no fact.
+- [x] Asking "how many variants were in this run" after loading the seed-42 summary returns the same integer the summary card shows, and names `run_summary.json` → `counts.n_variants`.
+- [x] Asking "what was the best composite score" after loading the seed-42 log returns `0.609` and the `job_id` of that variant (`gen00002`).
+- [x] That best-composite answer names the artifact and field the number came from.
+- [x] Asking "what was the GDT-TS" after loading only a design run returns `the loaded run doesn't record that`, names `benchmark_results.csv` (or equivalent), and `facts` is empty.
+- [x] Asking "how long did the run take" with only a log loaded returns `the loaded run doesn't record that`, names `run_summary.json`, and `facts` is empty.
+- [x] With `LLM_MODE=echo`, asking the variant-count question puts `8` in the echoed context.
+- [x] Asking any question with nothing loaded says to upload `log.jsonl` or `run_summary.json` first and returns no fact.
 
 ## Question round
 

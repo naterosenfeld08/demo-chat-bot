@@ -9,6 +9,20 @@ A running record of how this project got built and how AI was used to build it.
 
 ## Entries
 
+### 2026-10-03 - Feature 03 shipped: ask a computed question
+
+**What happened:** After a usable run is loaded, typed questions go to
+`POST /api/ask`. The server classifies a small set of intents, writes the
+answer, and (in `LLM_MODE=echo`) echoes the same stats block a live model
+would see. Seed-42's best composite answers as `0.609` for `gen00002`.
+**AI tools used, and for what:** Cursor (Claude / Grok) wrote the spec, seven
+failing tests, the implementation, and merged PR #3. No second-model question
+round or review, same thinner process as feature 02.
+**What surprised me:** The page composer still talked to `/api/chat` until this
+feature. Leaving that in place would have looked like the product worked while
+every number came from the model. Switching the form to `/api/ask` was the
+thing that made the rule visible.
+
 ### 2026-10-03 - Feature 02 shipped: the run summary card
 
 **What happened:** After a run is loaded, four headline numbers appear without a
@@ -60,15 +74,14 @@ required before PRs would open on this repo.
 
 | Role | Model | What it did |
 |---|---|---|
-| Spec writer / test writer / builder | Claude (Cursor) | Specs, failing tests, implementation, merges |
+| Spec writer / test writer / builder | Claude / Grok (Cursor) | Specs, failing tests, implementation, merges |
 | Questioner and reviewer for feature 01 | GPT-5.6 Sol | Ten spec questions; later a two-item code review of the page and the upload size cap |
 | Human | Nate | Chose the project (Run Analyst over a notebook or auditor), answered the question round, authorized the `second_payload` typo fix, approved tests, merged |
 
 The standing rule that mattered most: **the server computes every number; the
-model never does arithmetic.** Feature 02 is entirely Python. Feature 03 will
-pass a precomputed stats block into the model as context and prove that with
-an echo stub.
+model never does arithmetic.** Feature 02 is entirely Python. Feature 03 passes
+a precomputed stats block as context and proves that with an echo stub.
 
-Process that is thinner than the routine describes: feature 02 did not get a
-second-model question round or code review. That is recorded here so Stage 4
-does not invent a fuller process than happened.
+Process that is thinner than the routine describes: features 02 and 03 did not
+get a second-model question round or code review. That is recorded here so
+Stage 4 does not invent a fuller process than happened.
