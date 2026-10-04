@@ -16,6 +16,7 @@ from src.artifacts import (
     sanitize_filename,
     store,
 )
+from src.summary import build_summary
 
 load_dotenv()
 
@@ -102,6 +103,11 @@ def index():
 @app.get("/api/artifacts")
 def list_artifacts():
     return jsonify(session_payload(include_refused=False))
+
+
+@app.get("/api/summary")
+def run_summary_card():
+    return jsonify(build_summary(session_id(), Path(app.config["ARTIFACT_ROOT"])))
 
 
 @app.post("/api/artifacts/clear")

@@ -90,6 +90,14 @@
     #artifact-list { list-style: none; padding: 0; margin: 12px 0 0; }
     #artifact-list li { padding: 6px 0; border-top: 1px solid var(--line); font-size: 0.9rem; }
     #artifact-list li.refused { color: #8a1f11; }
+    #run-summary-card {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      font-size: 0.9rem;
+    }
+    #run-summary-card dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+    #run-summary-card dt { color: var(--muted); }
     .muted { color: var(--muted); font-size: 0.9rem; }
   </style>
 </head>
@@ -125,6 +133,7 @@
       </form>
       <div id="upload-status" class="muted" hidden></div>
       <ul id="artifact-list"></ul>
+      <div id="run-summary-card" hidden></div>
     </section>
     {% if not key_ready %}
     <div class="banner">Add your TensorX key to <code>.env</code> as <code>TENSORX_API_KEY</code>, then restart the app.</div>
@@ -145,6 +154,14 @@
     const fileInput = document.getElementById("file-input");
     const artifactList = document.getElementById("artifact-list");
     const uploadStatus = document.getElementById("upload-status");
+    const summaryCard = document.getElementById("run-summary-card");
+
+    const FIELD_LABELS = {
+      n_variants: "Variants",
+      n_with_structure: "With structure",
+      best_composite: "Best physics.composite",
+      seconds_wall: "Wall-clock seconds",
+    };
 
     function showStatus(text) {
       uploadStatus.hidden = !text;
@@ -187,10 +204,43 @@
       showStatus(parts.join(" "));
     }
 
+    function renderSummary(data) {
+      summaryCard.replaceChildren();
+      if (!data || !data.present) {
+        summaryCard.hidden = true;
+        return;
+      }
+      summaryCard.hidden = false;
+      const heading = document.createElement("strong");
+      heading.textContent = "Run summary";
+      summaryCard.appendChild(heading);
+      const dl = document.createElement("dl");
+      for (const item of data.fields || []) {
+        const dt = document.createElement("dt");
+        dt.textContent = FIELD_LABELS[item.id] || item.id;
+        const dd = document.createElement("dd");
+        let text = item.display;
+        if (item.source) text += " · " + item.source;
+        if (item.recomputed) text += " · recomputed";
+        dd.textContent = text;
+        dl.appendChild(dt);
+        dl.appendChild(dd);
+      }
+      summaryCard.appendChild(dl);
+      for (const warning of data.warnings || []) {
+        const p = document.createElement("p");
+        p.className = "muted";
+        p.textContent = warning;
+        summaryCard.appendChild(p);
+      }
+    }
+
     async function loadSession(extras) {
       const response = await fetch("/api/artifacts");
       const session = await response.json();
       renderSession(session, extras);
+      const summary = await fetch("/api/summary").then((r) => r.json());
+      renderSummary(summary);
       return session;
     }
 
