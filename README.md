@@ -94,7 +94,7 @@ That path is unused in the default echo mode.
 | Root directory | *(leave blank)* |
 | Build command | `pip install -r requirements.txt` |
 | Start command | `gunicorn app:app --bind 0.0.0.0:$PORT` |
-| Instance type | Free ($0) |
+| Instance type | **Free** (`plan: free` in `render.yaml`). Do not pick Starter — that is $7/month. |
 
 No API key is required on Render if `LLM_MODE` stays `echo`. See
 [docs/deploying.md](docs/deploying.md).
