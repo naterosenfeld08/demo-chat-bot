@@ -16,6 +16,7 @@ from src.artifacts import (
     sanitize_filename,
     store,
 )
+from src.ask import answer_question
 from src.summary import build_summary
 
 load_dotenv()
@@ -31,6 +32,7 @@ app.config["MAX_CONTENT_LENGTH"] = (
     + MULTIPART_OVERHEAD_BYTES
 )
 app.config["ARTIFACT_ROOT"] = tempfile.mkdtemp(prefix="petase-artifacts-")
+app.config["LLM_MODE"] = os.environ.get("LLM_MODE", "echo")
 
 API_URL = "https://api.tensorx.ai/v1/chat/completions"
 DEFAULT_MODEL = os.environ.get("TENSORX_MODEL", "z-ai/glm-5.2")
@@ -108,6 +110,22 @@ def list_artifacts():
 @app.get("/api/summary")
 def run_summary_card():
     return jsonify(build_summary(session_id(), Path(app.config["ARTIFACT_ROOT"])))
+
+
+@app.post("/api/ask")
+def ask_question():
+    data = request.get_json(silent=True) or {}
+    question = data.get("question") if isinstance(data, dict) else None
+    if not isinstance(question, str):
+        question = ""
+    return jsonify(
+        answer_question(
+            session_id(),
+            Path(app.config["ARTIFACT_ROOT"]),
+            question,
+            llm_mode=str(app.config.get("LLM_MODE", "echo")),
+        )
+    )
 
 
 @app.post("/api/artifacts/clear")
