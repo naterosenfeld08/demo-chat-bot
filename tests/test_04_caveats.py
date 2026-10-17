@@ -557,6 +557,46 @@ def test_variant_count_does_not_include_a_caveat(client, app, tmp_path):
     assert caveats_of(data) == {}
 
 
+def test_wall_clock_does_not_include_a_caveat(client, app, tmp_path):
+    """Asking how long the run took stays free of every caveat sentence, and a
+    missing caveat file does not append the stand-in."""
+    use_caveats(app, tmp_path)
+    upload(client, ("run_summary.json", summary_bytes()))
+    data = ask(client, "how long did the run take")
+    assert data["intent"] == "seconds_wall"
+    assert "run_summary.json" in data["answer"]
+    assert "not recorded" not in data["answer"]
+    for sentence in (FIREPROT, PROXY, NOT_TM, RF_CAVEAT):
+        assert sentence not in data["answer"]
+    assert caveats_of(data) == {}
+
+
+def test_estimate_is_not_a_tm_question(client, app, tmp_path):
+    """Asking for an estimate of the variant count is not a melting-temperature
+    refusal. The word estimate is not the word Tm."""
+    use_caveats(app, tmp_path)
+    upload(client, ("run_summary.json", summary_bytes()))
+    data = ask(client, "please estimate how many variants were in this run")
+    assert data["intent"] == "n_variants"
+    assert "8" in data["answer"]
+    assert PROXY not in data["answer"]
+    assert caveats_of(data) == {}
+
+
+def test_boolean_mutation_count_is_not_wild_type(client, app, tmp_path):
+    """A mutation count of false is not a wild-type record, even though false
+    compares equal to zero."""
+    use_caveats(app, tmp_path)
+    rows = records()
+    put(rows, "gen00000", mutation_count=False)
+    upload(client, ("log.jsonl", as_jsonl(rows)))
+    data = ask(client, STABILITY)
+    assert data["intent"] == "unanswerable"
+    assert data["facts"] == {}
+    assert "0.609" not in data["answer"]
+    assert data["answer"].endswith(NOT_TM)
+
+
 def test_best_composite_question_does_not_gain_a_caveat(client, app, tmp_path):
     """Asking for the best composite score still returns that score with no
     caveat sentence."""
