@@ -105,15 +105,16 @@ A numeric field is usable only under the same rule as the summary card: an
 int or a finite float. `null`, a string (including `"0"` and `"-1.2"`), a
 boolean, and NaN are missing. They are not coerced to zero.
 
-Wild type is a design-log record whose `mutation_count` is numeric 0 (`0` or
-`0.0`). A string `"0"` or a boolean is not a wild type. The comparison needs
-exactly one wild-type record and at least one record with `mutation_count`
-greater than 0, and both sides need a usable `physics.composite`. Otherwise
-the stability answer is unanswerable: intent `unanswerable`, `facts` `{}`,
-the sentence `the loaded run doesn't record that`, the name `log.jsonl`, and
-the words `mutation_count` and `0`. It still appends `scores_not_tm` when that
-text is usable, because the question is asking for a stability reading. It
-does not include a composite.
+Wild type is a design-log record whose `physics.mutation_count` is numeric 0
+(`0` or `0.0`). That is where the sample log stores the count. A string `"0"`
+or a boolean is not a wild type. The comparison needs exactly one wild-type
+record and at least one record with `physics.mutation_count` greater than 0,
+and both sides need a usable `physics.composite`. Otherwise the stability
+answer is unanswerable: intent `unanswerable`, `facts` `{}`, the sentence
+`the loaded run doesn't record that`, the name `log.jsonl`, and
+`physics.mutation_count`. It still appends `scores_not_tm` when that text is
+usable, because the question is asking for a stability reading. It does not
+include a composite.
 
 Displayed scores use feature #3's half-up three-decimal rule, including
 trailing zeros. The stability difference is the exact best-variant composite
@@ -202,7 +203,7 @@ because other model families were over the usage limit.
 | 2 | What if nothing is loaded? | Still the upload prompt. No Tm refusal and no score. |
 | 3 | Which wordings count, and does a named job id pick the variant? | Word rules are in "Which question is which". The variant is always the best-composite winner. A named job id is ignored. |
 | 4 | What if the caveat file or a key is bad? | Tm stays `refuse_tm`, answer exactly `not recorded`, facts empty. Variant count, best composite, and wall clock are unchanged. |
-| 5 | Not exactly one wild-type record? | Intent `unanswerable`, empty facts, names `log.jsonl` and a `mutation_count` of 0, and still appends `scores_not_tm` when that text exists. |
+| 5 | Not exactly one wild-type record? | Intent `unanswerable`, empty facts, names `log.jsonl` and `physics.mutation_count`, and still appends `scores_not_tm` when that text exists. |
 | 6 | Wild type or mutants lack a usable composite? | Same path as question 5. |
 | 7 | Null, string, boolean, or NaN? | Missing. Not coerced to 0. Wild type is only numeric 0. |
 | 8 | Summary and log disagree on the winner? | Keep feature #3's winner, say the two artifacts disagree, and read the field from that job in the log. If it is missing, unanswerable, no invented number. |
@@ -213,7 +214,7 @@ because other model families were over the usage limit.
 
 | Date | Change | Why |
 |---|---|---|
-|  |  |  |
+| 2026-10-16 | Wild type is `physics.mutation_count` | The sample design log stores that count inside `physics`, not on the record root. |
 
 ## Notes
 
